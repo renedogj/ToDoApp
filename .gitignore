@@ -8,6 +8,8 @@ Thumbs.db          # Archivos generados por Windows
 
 # Node.js
 node_modules/      # Dependencias instaladas
+/backend/node_modules/
+/frontend/node_modules/
 npm-debug.log*     # Archivos de logs de npm
 yarn-error.log     # Logs de errores de Yarn
 yarn-debug.log     # Logs de depuración de Yarn
@@ -25,6 +27,7 @@ yarn-debug.log     # Logs de depuración de Yarn
 
 # Configuración de editores/IDE
 .vscode/           # Configuración de VS Code
+.vscode
 .idea/             # Configuración de JetBrains (WebStorm, IntelliJ, etc.)
 *.iml              # Archivos de proyecto de IntelliJ
 
