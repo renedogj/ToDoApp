@@ -43,6 +43,9 @@ yarn-debug.log     # Logs de depuración de Yarn
 jest/              # Archivos generados por Jest
 /cypress/screenshots/ # Capturas de pruebas de Cypress
 /cypress/videos/   # Videos generados por Cypress
+tests/
+/backend/tests/
+/frontend/tests/
 
 # Otros
 *.sqlite           # Bases de datos SQLite
