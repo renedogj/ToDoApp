@@ -1,0 +1,46 @@
+# General
+.DS_Store          # Archivos generados por macOS
+Thumbs.db          # Archivos generados por Windows
+*.log              # Archivos de logs
+*.tmp              # Archivos temporales
+*.bak              # Archivos de respaldo
+*.swp              # Archivos temporales de editores de texto
+
+# Node.js
+node_modules/      # Dependencias instaladas
+npm-debug.log*     # Archivos de logs de npm
+yarn-error.log     # Logs de errores de Yarn
+yarn-debug.log     # Logs de depuración de Yarn
+.pnpm-debug.log    # Logs de depuración de pnpm
+
+# Entornos de desarrollo
+.env               # Variables de entorno
+.env.local         # Variables de entorno locales
+.env.*.local       # Variables de entorno por entorno (e.g., `.env.production.local`)
+
+# Build outputs
+/dist/             # Archivos generados del frontend
+/build/            # Archivos generados del frontend o backend
+/out/              # Archivos de Next.js
+
+# Configuración de editores/IDE
+.vscode/           # Configuración de VS Code
+.idea/             # Configuración de JetBrains (WebStorm, IntelliJ, etc.)
+*.iml              # Archivos de proyecto de IntelliJ
+
+# Logs y datos temporales
+/logs/             # Carpeta de logs
+*.cache            # Caché generada por herramientas como Parcel
+/tmp/              # Carpeta de archivos temporales
+/temp/             # Otra carpeta de archivos temporales
+
+# Sistemas de pruebas
+/coverage/         # Informes de cobertura de pruebas
+.nyc_output        # Salida de NYC (Istanbul)
+jest/              # Archivos generados por Jest
+/cypress/screenshots/ # Capturas de pruebas de Cypress
+/cypress/videos/   # Videos generados por Cypress
+
+# Otros
+*.sqlite           # Bases de datos SQLite
+*.sqlite3          # Bases de datos SQLite
