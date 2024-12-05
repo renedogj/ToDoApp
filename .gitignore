@@ -17,6 +17,8 @@ yarn-debug.log     # Logs de depuración de Yarn
 
 # Entornos de desarrollo
 .env               # Variables de entorno
+/backend/.env               
+/frontend/.env               
 .env.local         # Variables de entorno locales
 .env.*.local       # Variables de entorno por entorno (e.g., `.env.production.local`)
 
