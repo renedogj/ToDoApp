@@ -2,22 +2,22 @@ import Users from "../models/userModel.js";
 
 
 export async function getUsers(req, res) {
-    try {
-        const users = await Users.find();
-        res.status(200).json(users);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+	try {
+		const users = await Users.find();
+		res.status(200).json(users);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
 };
 
 export async function createUser(req, res) {
-    try {
-        const Users = new Users(req.body);
-        await Users.save();
-        res.status(201).json(Users);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
+	try {
+		const Users = new Users(req.body);
+		await Users.save();
+		res.status(201).json(Users);
+	} catch (err) {
+		res.status(400).json({ error: err.message });
+	}
 };
 
 // function checkNewUser(userJson) {
@@ -32,6 +32,6 @@ export async function createUser(req, res) {
 // }
 
 export default {
-    getUsers,
-    createUser
+	getUsers,
+	createUser
 }
