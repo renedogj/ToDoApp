@@ -1,35 +1,34 @@
-
 <template>
 	<ion-split-pane when="xs" content-id="main">
-		<SideMenu />
-		<ion-page id="main">
-			<ion-header :translucent="true">
-				<ion-toolbar>
-					<ion-buttons slot="start">
-						<ion-menu-button></ion-menu-button>
-					</ion-buttons>
-					<ion-title>Home Page</ion-title>
-				</ion-toolbar>
-			</ion-header>
-			<ion-content :fullscreen="true">
-				<ion-card v-for="tarea in tareas">
-					<ion-card-header>
-						<ion-card-title>{{ tarea.title }}</ion-card-title>
-						<ion-card-subtitle>{{ tarea.description }}</ion-card-subtitle>
-					</ion-card-header>
+	<SideMenu />
+	<ion-page id="main">
+		<ion-header :translucent="true">
+			<ion-toolbar>
+				<ion-buttons slot="start">
+					<ion-menu-button menu="main-menu"></ion-menu-button>
+				</ion-buttons>
+				<ion-title>Home Page</ion-title>
+			</ion-toolbar>
+		</ion-header>
+		<ion-content :fullscreen="true">
+			<!-- <ion-card v-for="tarea in tareas">
+				<ion-card-header>
+					<ion-card-title>{{ tarea.title }}</ion-card-title>
+					<ion-card-subtitle>{{ tarea.description }}</ion-card-subtitle>
+				</ion-card-header>
 
-					<ion-card-content>
-						{{ tarea.creationDate }}
-						<p>Status: {{ tarea.status }}</p>
-					</ion-card-content>
-				</ion-card>
-			</ion-content>
-			<ion-footer>
-				<ion-toolbar>
-					<ion-title>Footer</ion-title>
-				</ion-toolbar>
-			</ion-footer>
-		</ion-page>
+				<ion-card-content>
+					{{ tarea.creationDate }}
+					<p>Status: {{ tarea.status }}</p>
+				</ion-card-content>
+			</ion-card> -->
+		</ion-content>
+		<ion-footer>
+			<ion-toolbar>
+				<ion-title>Footer</ion-title>
+			</ion-toolbar>
+		</ion-footer>
+	</ion-page>
 	</ion-split-pane>
 </template>
 
@@ -53,6 +52,8 @@ import { ref } from "vue";
 import SideMenu from "@/components/SideMenu.vue";
 import { getAllTasks } from "@/models/Tasks";
 
+
+
 const tareas = ref([]);
 // const loading = ref(true);
 // const error = ref("");
@@ -60,6 +61,7 @@ const tareas = ref([]);
 (async () => {
 	try {
 		const datos = await getAllTasks(); // Llamada a la función
+		console.log(datos);
 		tareas.value = datos; // Asignar los datos a la variable reactiva
 	} catch (error) {
 		console.error("Error al cargar tareas:", error);
@@ -70,7 +72,7 @@ const tareas = ref([]);
 </script>
 
 <style scoped>
-#container {
+/* #container {
 	text-align: center;
 
 	position: absolute;
@@ -96,5 +98,5 @@ const tareas = ref([]);
 
 #container a {
 	text-decoration: none;
-}
+} */
 </style>

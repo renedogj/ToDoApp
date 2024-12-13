@@ -1,7 +1,10 @@
 <template>
-	<ion-menu content-id="main">
+	<ion-menu type="overlay" menu-id="main-menu" content-id="main">
 		<ion-header>
 			<ion-toolbar>
+				<ion-buttons slot="start">
+					<ion-menu-button></ion-menu-button>
+				</ion-buttons>
 				<ion-title>Menu Content</ion-title>
 			</ion-toolbar>
 		</ion-header>
@@ -32,7 +35,7 @@
 	</ion-menu>
 </template>
 
-<script>
+<script lang="ts" setup>
 import {
 	IonHeader,
 	IonContent,
@@ -40,25 +43,20 @@ import {
 	IonToolbar,
 	IonFooter,
 	IonMenu,
+	IonButtons,
+	IonButton,
+	IonIcon,
+	IonMenuButton,
 	IonItem,
 	IonLabel,
 	IonList
 } from '@ionic/vue';
+import { menu } from 'ionicons/icons';
 
-import { defineComponent } from 'vue';
+// type Props = {
+// 	isOpen: boolean;
+// }
 
-export default defineComponent({
-	components: {
-		IonHeader,
-		IonContent,
-		IonTitle,
-		IonToolbar,
-		IonFooter,
-		IonMenu,
-		IonItem,
-		IonLabel,
-		IonList
-	},
-});
+// const props = defineProps<Props>();
 
 </script>
