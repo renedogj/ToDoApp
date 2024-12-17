@@ -3,7 +3,6 @@ import Task from "../models/taskModel.js";
 export async function getTasks(req, res) {
 	try {
 		const tasks = await Task.find();
-		// const tasks = await Task.getTasks();
 		res.status(200).json(tasks);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
