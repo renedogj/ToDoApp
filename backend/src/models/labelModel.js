@@ -5,4 +5,4 @@ const labelSchema = new mongoose.Schema({
 	name: String
 }, { timestamps: true });
 
-export default mongoose.model("Category", categorySchema);
+export default mongoose.model("Label", labelSchema);

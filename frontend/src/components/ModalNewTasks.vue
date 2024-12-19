@@ -1,21 +1,5 @@
 <template>
 	<ion-modal :is-open="isOpen" @did-dismiss="closeModal" class="modalCrearTask" :fullscreen="false">
-		<!-- <ion-header>
-			<ion-toolbar>
-				<ion-title>Nueva tarea</ion-title>
-			</ion-toolbar>
-		</ion-header> -->
-		<!-- <ion-header class="ion-padding"> -->
-		<!-- <ion-input v-model="task.title" placeholder="Título de la tarea"></ion-input> -->
-		<!-- <ion-toolbar> -->
-
-		<!-- <ion-buttons slot="end">
-					<ion-button @click="closeModal">Cancelar</ion-button>
-					<ion-button :strong="true" @click="submitTask">Crear</ion-button>
-				</ion-buttons> -->
-		<!-- </ion-toolbar> -->
-		<!-- </ion-header> -->
-
 		<ion-content class="ion-padding">
 			<div class="modal-content">
 				<!-- Contenido -->
@@ -57,12 +41,13 @@
 					<ion-input v-model="sharedWithInput" placeholder="123, 456, 789"></ion-input>
 				</ion-item> -->
 			<!-- </ion-list> -->
-
-			<!-- <ion-button expand="block" @click="submitTask">Crear Tarea</ion-button> -->
-
 		</ion-content>
 		<ion-footer>
-			<ion-toolbar>
+			<ion-toolbar class="modalFooteToolBar">
+				<ion-buttons slot="start">
+					<ion-button @click="closeModal">Cancelar</ion-button>
+					<ion-button :strong="true" @click="submitTask">Crear</ion-button>
+				</ion-buttons>
 				<ion-buttons slot="end">
 					<ion-button @click="closeModal">Cancelar</ion-button>
 					<ion-button :strong="true" @click="submitTask">Crear</ion-button>
@@ -106,10 +91,10 @@ const emit = defineEmits(['update:isOpen', 'taskCreated']);
 const task = ref({
 	title: '',
 	description: '',
-	priority: 'medium',
+	// priority: 'medium',
 	dueDate: '',
-	categoryId: '',
-	sharedWith: [],
+	categoryId: [],
+	// sharedWith: [],
 });
 
 const sharedWithInput = ref('');
@@ -144,5 +129,9 @@ const submitTask = async () => {
 	--width: 60%;
 	--backdrop-opacity: 0.7;
 	--border-radius: 15px
+}
+
+.modalFooteToolBar{
+	padding: 0 1%;
 }
 </style>
