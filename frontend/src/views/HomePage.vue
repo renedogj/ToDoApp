@@ -7,26 +7,52 @@
 					<ion-buttons slot="start">
 						<ion-menu-button menu="main-menu"></ion-menu-button>
 					</ion-buttons>
-					<ion-title>Home Page</ion-title>
+					<ion-title>Tus tareas</ion-title>
+					<ion-button @click="toggleView" slot="secondary" fill="clear" color="primary" class="right-10">
+						<ion-icon slot="icon-only" :icon="isGridView ? list : grid"></ion-icon>
+					</ion-button>
+					<ion-button id="open-modal" @click="openModal" slot="primary" fill="solid" shape="round"
+						color="primary" class="right-20">
+						<ion-icon slot="icon-only" :icon="add"></ion-icon>
+					</ion-button>
 				</ion-toolbar>
 			</ion-header>
 			<ion-content :fullscreen="true">
-				<ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
-					<ion-fab-button id="open-modal" expand="block" @click="openModal">
-						<ion-icon :icon=" add"></ion-icon>
-					</ion-fab-button>
-				</ion-fab>
-				<ion-card v-for="tarea in tareas">
-					<ion-card-header>
-						<ion-card-title>{{ tarea.title }}</ion-card-title>
-						<ion-card-subtitle>{{ tarea.description }}</ion-card-subtitle>
-					</ion-card-header>
+				<ion-grid v-if="isGridView">
+					<ion-row>
+						<!-- <ion-col v-for="tarea in tareas" :key="tarea._id" size="4"> -->
+						<ion-card v-for="tarea in tareas" :key="tarea._id">
+							<div class="card-header">
+								<ion-card-header>
+									<ion-card-title>{{ tarea.title }}</ion-card-title>
+								</ion-card-header>
+								<ion-button @click="editTask(tarea)" class="edit-button" fill="clear">
+									<ion-icon slot="icon-only" :icon="createOutline"></ion-icon>
+								</ion-button>
+							</div>
+							<ion-card-content>
+								<p>{{ tarea.description }}</p>
+							</ion-card-content>
+						</ion-card>
+						<!-- </ion-col> -->
+					</ion-row>
+				</ion-grid>
 
-					<ion-card-content>
-						{{ tarea.creationDate }}
-						<p>Status: {{ tarea.status }}</p>
-					</ion-card-content>
-				</ion-card>
+				<ion-list v-else>
+					<ion-card v-for="tarea in tareas" :key="tarea._id">
+						<div class="card-header">
+							<ion-card-header>
+								<ion-card-title>{{ tarea.title }}</ion-card-title>
+							</ion-card-header>
+							<ion-button @click="editTask(tarea)" class="edit-button" fill="clear">
+								<ion-icon slot="icon-only" :icon="createOutline"></ion-icon>
+							</ion-button>
+						</div>
+						<ion-card-content>
+							<p>{{ tarea.description }}</p>
+						</ion-card-content>
+					</ion-card>
+				</ion-list>
 			</ion-content>
 			<ion-footer>
 				<ion-toolbar>
@@ -53,6 +79,12 @@ import {
 	IonSplitPane,
 	IonItem,
 	IonLabel,
+	IonGrid,
+	IonRow,
+	IonCol,
+	IonModal,
+	IonInput,
+	IonTextarea,
 	IonFab, IonFabButton, IonFabList, IonIcon,
 	IonList, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle
 } from '@ionic/vue';
@@ -60,7 +92,7 @@ import { ref } from "vue";
 import SideMenu from "@/components/SideMenu.vue";
 import ModalNewTask from "@/components/ModalNewTasks.vue";
 import { getAllTasks } from "@/models/Tasks";
-import { add } from 'ionicons/icons';
+import { add, list, grid, create, createOutline } from 'ionicons/icons';
 
 const isModalOpen = ref(false);
 
@@ -88,12 +120,42 @@ const tareas = ref([]);
 		// loading.value = false; // Marcar como cargado
 	}
 })();
+
+const isGridView = ref(false);
+
+const toggleView = () =>  {
+	isGridView.value = !isGridView.value;
+}
+
+const editTask = (newTask: any) => {
+	// isGridView.value = !isGridView.value;
+}
+
 </script>
 
 <style scoped>
-ion-fab {
-	right: 20px;
+.right-10 {
+	margin-right: 10px;
 }
+
+.right-20 {
+	margin-right: 20px;
+}
+
+.card-header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	/* position: relative; */
+}
+
+/* .edit-button {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	z-index: 1;
+} */
 /* #container {
 	text-align: center;
 
