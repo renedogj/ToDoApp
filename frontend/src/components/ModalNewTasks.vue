@@ -44,10 +44,10 @@
 		</ion-content>
 		<ion-footer>
 			<ion-toolbar class="modalFooteToolBar">
-				<ion-buttons slot="start">
+				<!-- <ion-buttons slot="start">
 					<ion-button @click="closeModal">Cancelar</ion-button>
 					<ion-button :strong="true" @click="submitTask">Crear</ion-button>
-				</ion-buttons>
+				</ion-buttons> -->
 				<ion-buttons slot="end">
 					<ion-button @click="closeModal">Cancelar</ion-button>
 					<ion-button :strong="true" @click="submitTask">Crear</ion-button>
@@ -104,18 +104,12 @@ const closeModal = () => {
 };
 
 const submitTask = async () => {
-	// Procesar los IDs de sharedWith
-	// task.value.sharedWith = sharedWithInput.value ? sharedWithInput.value.split(',').map((id) => id.trim()) : [];
-
 	try {
-		// Enviar los datos al backend
 		const response = await axios.post('http://localhost:3000/tasks', task.value);
 		console.log('Tarea creada:', response.data);
 
-		// Emitir un evento para notificar la creación
 		emit('taskCreated', response.data);
 
-		// Cerrar el modal
 		closeModal();
 	} catch (error) {
 		console.error('Error al crear la tarea:', error);

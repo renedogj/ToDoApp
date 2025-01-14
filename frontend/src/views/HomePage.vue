@@ -8,7 +8,7 @@
 						<ion-menu-button menu="main-menu"></ion-menu-button>
 					</ion-buttons>
 					<ion-title>Tus tareas</ion-title>
-					<ion-button @click="toggleView" slot="secondary" fill="clear" color="primary" class="right-10">
+					<ion-button @click="toggleGridListView" slot="secondary" fill="clear" color="primary" class="right-10">
 						<ion-icon slot="icon-only" :icon="isGridView ? list : grid"></ion-icon>
 					</ion-button>
 					<ion-button id="open-modal" @click="openModal" slot="primary" fill="solid" shape="round"
@@ -20,12 +20,16 @@
 			<ion-content :fullscreen="true">
 				<ion-grid v-if="isGridView">
 					<ion-row>
-						<TaskCard v-for="task in tasks" :task="task" @edit-task="editTask" />
+						<div v-for="task in tasks" :key="task._id">
+							<TaskCard :task="task" @editTask="editTask" />
+						</div>
 					</ion-row>
 				</ion-grid>
 
 				<ion-list v-else>
-					<TaskCard v-for="task in tasks" :task="task" @edit-task="editTask" />
+					<div v-for="task in tasks" :key="task._id">
+						<TaskCard :task="task" @editTask="editTask" />
+					</div>
 				</ion-list>
 			</ion-content>
 			<ion-footer>
@@ -62,7 +66,7 @@ import {
 	IonFab, IonFabButton, IonFabList, IonIcon,
 	IonList, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle
 } from '@ionic/vue';
-import { ref } from "vue";
+import { ref, markRaw, reactive } from "vue";
 import SideMenu from "@/components/SideMenu.vue";
 import TaskCard from "@/components/TaskCard.vue"
 import ModalNewTask from "@/components/ModalNewTasks.vue";
@@ -74,27 +78,26 @@ const openModal = () => {
 	isModalOpen.value = true;
 };
 
-const handleTaskCreated = (newTask: any) => {
-	console.log('Nueva tarea creada:', newTask);
-	// Aquí puedes actualizar una lista de tareas si la tienes.
+const tasks = ref<Task[]>([]);
+const handleTaskCreated = (newTask: Task) => {
+	tasks.value.unshift(newTask);
 };
 
-const tasks = ref<Task[]>([]);
 (async () => {
 	try {
-		const datos = await getAllTasks(); // Llamada a la función
-		console.log(datos);
-		tasks.value = datos; // Asignar los datos a la variable reactiva
+		const datos = await getAllTasks();
+		// console.log(datos);
+		tasks.value = datos;
 	} catch (error) {
 		console.error("Error al cargar tareas:", error);
 	} finally {
-		// loading.value = false; // Marcar como cargado
+		// loading.value = false;
 	}
 })();
 
-const isGridView = ref(false);
+const isGridView = ref(true);
 
-const toggleView = () =>  {
+const toggleGridListView = () =>  {
 	isGridView.value = !isGridView.value;
 }
 
