@@ -1,8 +1,11 @@
 <template>
-	<ion-modal :is-open="isOpen" @did-dismiss="closeModal" class="modalCrearTask" :fullscreen="false">
+	<ion-modal :is-open="isOpen" @did-dismiss="closeModal" class="modalCrearTask" :fullscreen="false"
+		:class="modalClass">
 		<ion-content class="ion-padding">
 			<ion-input v-model="task.title" placeholder="Título de la tarea"></ion-input>
 
+			<ion-textarea v-if="isDescriptionVisible" v-model="task.description" :rows=2
+				placeholder="Describe la tarea"></ion-textarea>
 			<!-- <ion-list> -->
 			<!-- <ion-item>
 					<ion-label position="stacked">Título</ion-label>
@@ -40,15 +43,15 @@
 			<!-- </ion-list> -->
 		</ion-content>
 		<ion-footer>
-			<ion-toolbar class="modalFooteToolBar">
+			<ion-toolbar class="modalFooterToolBar">
 				<ion-buttons slot="start">
-					<ion-button @click="closeModal" color="primary">
+					<ion-button @click="openDescription" color="primary">
 						<ion-icon slot="icon-only" :icon="documentText"></ion-icon>
 					</ion-button>
-					<ion-button @click="closeModal" color="primary">
+					<ion-button @click="openDescription" color="primary">
 						<ion-icon slot="icon-only" :icon="bookmarks"></ion-icon>
 					</ion-button>
-					<ion-button @click="closeModal" color="primary">
+					<ion-button @click="openDescription" color="primary">
 						<ion-icon slot="icon-only" :icon="calendarClear"></ion-icon>
 					</ion-button>
 				</ion-buttons>
@@ -82,7 +85,7 @@ import {
 	IonIcon,
 	IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle
 } from '@ionic/vue';
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, computed } from 'vue';
 import { Task } from '@/models/Tasks';
 import axios from 'axios';
 import { documentText, bookmarks, calendarClear  } from "ionicons/icons";
@@ -99,6 +102,16 @@ const task = ref<Partial<Task>>({
 	labels: [],
 	dueDate: '',
 });
+
+const isDescriptionVisible = ref(false);
+
+const openDescription = () => {
+	isDescriptionVisible.value = !isDescriptionVisible.value;
+};
+
+const modalClass = computed(() => ({
+	"descriptionIsOpen": isDescriptionVisible.value,
+}));
 
 const createTask = async () => {
 	try {
@@ -121,6 +134,8 @@ const closeModal = () => {
 	};
 	emit('update:isOpen', false);
 };
+
+
 </script>
 
 <style>
@@ -128,10 +143,15 @@ const closeModal = () => {
 	--height: 15%;
 	--width: 60%;
 	--backdrop-opacity: 0.7;
-	--border-radius: 15px
+	--border-radius: 15px;
+	--box-shadow: none;
 }
 
-.modalFooteToolBar{
+.descriptionIsOpen{
+	--height: 23%;
+}
+
+.modalFooterToolBar{
 	padding: 0 1%;
 }
 </style>
