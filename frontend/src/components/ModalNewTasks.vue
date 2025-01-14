@@ -1,10 +1,7 @@
 <template>
 	<ion-modal :is-open="isOpen" @did-dismiss="closeModal" class="modalCrearTask" :fullscreen="false">
 		<ion-content class="ion-padding">
-			<div class="modal-content">
-				<!-- Contenido -->
-				<ion-input v-model="task.title" placeholder="Título de la tarea"></ion-input>
-			</div>
+			<ion-input v-model="task.title" placeholder="Título de la tarea"></ion-input>
 
 			<!-- <ion-list> -->
 			<!-- <ion-item>
@@ -44,13 +41,20 @@
 		</ion-content>
 		<ion-footer>
 			<ion-toolbar class="modalFooteToolBar">
-				<!-- <ion-buttons slot="start">
-					<ion-button @click="closeModal">Cancelar</ion-button>
-					<ion-button :strong="true" @click="submitTask">Crear</ion-button>
-				</ion-buttons> -->
+				<ion-buttons slot="start">
+					<ion-button @click="closeModal" color="primary">
+						<ion-icon slot="icon-only" :icon="documentText"></ion-icon>
+					</ion-button>
+					<ion-button @click="closeModal" color="primary">
+						<ion-icon slot="icon-only" :icon="bookmarks"></ion-icon>
+					</ion-button>
+					<ion-button @click="closeModal" color="primary">
+						<ion-icon slot="icon-only" :icon="calendarClear"></ion-icon>
+					</ion-button>
+				</ion-buttons>
 				<ion-buttons slot="end">
 					<ion-button @click="closeModal">Cancelar</ion-button>
-					<ion-button :strong="true" @click="submitTask">Crear</ion-button>
+					<ion-button :strong="true" @click="createTask">Crear</ion-button>
 				</ion-buttons>
 			</ion-toolbar>
 		</ion-footer>
@@ -75,35 +79,28 @@ import {
 	IonSelect,
 	IonSelectOption,
 	IonDatetime,
+	IonIcon,
 	IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle
 } from '@ionic/vue';
-// import { OverlayEventDetail } from '@ionic/core/components';
 import { ref, defineProps, defineEmits } from 'vue';
+import { Task } from '@/models/Tasks';
 import axios from 'axios';
+import { documentText, bookmarks, calendarClear  } from "ionicons/icons";
 
 const props = defineProps({
-	isOpen: Boolean, // Prop para controlar si el modal está abierto
+	isOpen: Boolean,
 });
 
 const emit = defineEmits(['update:isOpen', 'taskCreated']);
 
-// Modelo de datos inicial de la tarea
-const task = ref({
+const task = ref<Partial<Task>>({
 	title: '',
 	description: '',
-	// priority: 'medium',
+	labels: [],
 	dueDate: '',
-	categoryId: [],
-	// sharedWith: [],
 });
 
-const sharedWithInput = ref('');
-
-const closeModal = () => {
-	emit('update:isOpen', false);
-};
-
-const submitTask = async () => {
+const createTask = async () => {
 	try {
 		const response = await axios.post('http://localhost:3000/tasks', task.value);
 		console.log('Tarea creada:', response.data);
@@ -114,6 +111,15 @@ const submitTask = async () => {
 	} catch (error) {
 		console.error('Error al crear la tarea:', error);
 	}
+};
+
+const closeModal = () => {
+	task.value = {
+		title: '',
+		description: '',
+		dueDate: '',
+	};
+	emit('update:isOpen', false);
 };
 </script>
 
