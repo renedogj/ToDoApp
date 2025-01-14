@@ -20,38 +20,12 @@
 			<ion-content :fullscreen="true">
 				<ion-grid v-if="isGridView">
 					<ion-row>
-						<!-- <ion-col v-for="tarea in tareas" :key="tarea._id" size="4"> -->
-						<ion-card v-for="tarea in tareas" :key="tarea._id">
-							<div class="card-header">
-								<ion-card-header>
-									<ion-card-title>{{ tarea.title }}</ion-card-title>
-								</ion-card-header>
-								<ion-button @click="editTask(tarea)" class="edit-button" fill="clear">
-									<ion-icon slot="icon-only" :icon="createOutline"></ion-icon>
-								</ion-button>
-							</div>
-							<ion-card-content>
-								<p>{{ tarea.description }}</p>
-							</ion-card-content>
-						</ion-card>
-						<!-- </ion-col> -->
+						<TaskCard v-for="task in tasks" :task="task" @edit-task="editTask" />
 					</ion-row>
 				</ion-grid>
 
 				<ion-list v-else>
-					<ion-card v-for="tarea in tareas" :key="tarea._id">
-						<div class="card-header">
-							<ion-card-header>
-								<ion-card-title>{{ tarea.title }}</ion-card-title>
-							</ion-card-header>
-							<ion-button @click="editTask(tarea)" class="edit-button" fill="clear">
-								<ion-icon slot="icon-only" :icon="createOutline"></ion-icon>
-							</ion-button>
-						</div>
-						<ion-card-content>
-							<p>{{ tarea.description }}</p>
-						</ion-card-content>
-					</ion-card>
+					<TaskCard v-for="task in tasks" :task="task" @edit-task="editTask" />
 				</ion-list>
 			</ion-content>
 			<ion-footer>
@@ -90,12 +64,12 @@ import {
 } from '@ionic/vue';
 import { ref } from "vue";
 import SideMenu from "@/components/SideMenu.vue";
+import TaskCard from "@/components/TaskCard.vue"
 import ModalNewTask from "@/components/ModalNewTasks.vue";
 import { getAllTasks } from "@/models/Tasks";
-import { add, list, grid, create, createOutline } from 'ionicons/icons';
+import { add, list, grid } from 'ionicons/icons';
 
 const isModalOpen = ref(false);
-
 const openModal = () => {
 	isModalOpen.value = true;
 };
@@ -105,15 +79,12 @@ const handleTaskCreated = (newTask: any) => {
 	// Aquí puedes actualizar una lista de tareas si la tienes.
 };
 
-const tareas = ref([]);
-// const loading = ref(true);
-// const error = ref("");
-
+const tasks = ref([]);
 (async () => {
 	try {
 		const datos = await getAllTasks(); // Llamada a la función
 		console.log(datos);
-		tareas.value = datos; // Asignar los datos a la variable reactiva
+		tasks.value = datos; // Asignar los datos a la variable reactiva
 	} catch (error) {
 		console.error("Error al cargar tareas:", error);
 	} finally {
@@ -127,9 +98,9 @@ const toggleView = () =>  {
 	isGridView.value = !isGridView.value;
 }
 
-const editTask = (newTask: any) => {
-	// isGridView.value = !isGridView.value;
-}
+const editTask = (task: any) => {
+	console.log('Editar tarea:', task);
+};
 
 </script>
 
@@ -141,46 +112,4 @@ const editTask = (newTask: any) => {
 .right-20 {
 	margin-right: 20px;
 }
-
-.card-header {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	/* position: relative; */
-}
-
-/* .edit-button {
-	position: absolute;
-	top: 6px;
-	right: 6px;
-	z-index: 1;
-} */
-/* #container {
-	text-align: center;
-
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-#container strong {
-	font-size: 20px;
-	line-height: 26px;
-}
-
-#container p {
-	font-size: 16px;
-	line-height: 22px;
-
-	color: #8c8c8c;
-
-	margin: 0;
-}
-
-#container a {
-	text-decoration: none;
-} */
 </style>
