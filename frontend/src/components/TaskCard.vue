@@ -25,12 +25,10 @@ import {
 } from '@ionic/vue';
 import { createOutline } from 'ionicons/icons';
 import { defineProps, defineEmits } from 'vue';
+import { Task } from '@/models/Tasks';
 
 type Props = {
-	task: {
-		type: Object,
-		required: true,
-	}
+	task: Task
 }
 
 const props = defineProps<Props>();
@@ -38,7 +36,7 @@ const task = props.task;
 
 
 const emit = defineEmits(['editTask']);
-const onEdit = (task: any) => {
+const onEdit = (task: Task) => {
 	emit('editTask', task);
 };
 

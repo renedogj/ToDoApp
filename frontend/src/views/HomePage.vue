@@ -66,8 +66,8 @@ import { ref } from "vue";
 import SideMenu from "@/components/SideMenu.vue";
 import TaskCard from "@/components/TaskCard.vue"
 import ModalNewTask from "@/components/ModalNewTasks.vue";
-import { getAllTasks } from "@/models/Tasks";
-import { add, list, grid } from 'ionicons/icons';
+import { getAllTasks, Task } from '@/models/Tasks';
+import { add, list, grid } from "ionicons/icons";
 
 const isModalOpen = ref(false);
 const openModal = () => {
@@ -79,7 +79,7 @@ const handleTaskCreated = (newTask: any) => {
 	// Aquí puedes actualizar una lista de tareas si la tienes.
 };
 
-const tasks = ref([]);
+const tasks = ref<Task[]>([]);
 (async () => {
 	try {
 		const datos = await getAllTasks(); // Llamada a la función
@@ -98,7 +98,7 @@ const toggleView = () =>  {
 	isGridView.value = !isGridView.value;
 }
 
-const editTask = (task: any) => {
+const editTask = (task: Task) => {
 	console.log('Editar tarea:', task);
 };
 
