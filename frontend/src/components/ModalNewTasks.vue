@@ -91,8 +91,9 @@ import {
 } from '@ionic/vue';
 import { ref, defineProps, defineEmits, computed } from 'vue';
 import { Task } from '@/models/Tasks';
-import axios from 'axios';
 import { documentText, bookmarks, calendarClear  } from "ionicons/icons";
+import { formatDate, ddMM24, HHmm24 } from '@/utils/formatDate';
+import axios from 'axios';
 
 const props = defineProps({
 	isOpen: Boolean,
@@ -143,34 +144,6 @@ const modalClass = computed(() => {
 		"descriptionMarksCalendarAreOpen": valueClass == 7,
 	}
 });
-
-const ddMMHHmm24: Intl.DateTimeFormatOptions = {
-	day: '2-digit',
-	month: 'long',
-	hour: '2-digit',
-	minute: '2-digit',
-	hourCycle: 'h23',
-};
-
-const ddMM24: Intl.DateTimeFormatOptions = {
-	day: '2-digit',
-	month: 'long',
-	hourCycle: 'h23',
-};
-
-const HHmm24: Intl.DateTimeFormatOptions = {
-	hour: '2-digit',
-	minute: '2-digit',
-	hourCycle: 'h23',
-};
-
-const formatDate = (date: any, formatOptions?: Intl.DateTimeFormatOptions) => {
-	if(date != null && date != ""){
-		return new Intl.DateTimeFormat('es-ES', formatOptions).format(new Date(date));
-	}else{
-		return new Intl.DateTimeFormat('es-ES', formatOptions).format(new Date());
-	}
-};
 
 const createTask = async () => {
 	try {
@@ -237,7 +210,6 @@ const closeModal = () => {
 }
 
 .dateTimeContainer {
-	/* background-color: red; */
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
