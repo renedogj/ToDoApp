@@ -9,7 +9,7 @@ declare module '@/models/Tasks' {
 		statusId: number;
 		status: string;
 		labels: Array<string | ObjectId>;
-		dueDate?: string | Date;
+		dueDate?: string | string[];
 		createdAt: string | Date;
 		updatedAt: string | Date;
 	}
