@@ -38,7 +38,7 @@
 				</ion-toolbar>
 			</ion-footer>
 		</ion-page>
-		<ModalNewTask :isOpen="isModalOpen" @update:isOpen="isModalOpen = $event" @taskCreated="handleTaskCreated" />
+		<!-- <ModalNewTask :isOpen="isModalOpen" @update:isOpen="isModalOpen = $event" @taskCreated="handleTaskCreated" /> -->
 	</ion-split-pane>
 </template>
 
@@ -55,47 +55,76 @@ import {
 	IonMenu,
 	IonMenuButton,
 	IonSplitPane,
-	IonItem,
-	IonLabel,
+	// IonItem,
+	// IonLabel,
 	IonGrid,
 	IonRow,
-	IonCol,
-	IonModal,
-	IonInput,
-	IonTextarea,
-	IonFab, IonFabButton, IonFabList, IonIcon,
+	// IonCol,
+	// IonModal,
+	// IonInput,
+	// IonTextarea,
+	// IonFab, IonFabButton, IonFabList,
+	IonIcon,
 	IonList, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle
 } from '@ionic/vue';
-import { ref, markRaw, reactive } from "vue";
+import { ref, triggerRef , markRaw, reactive, onMounted  } from "vue";
 import SideMenu from "@/components/SideMenu.vue";
 import TaskCard from "@/components/TaskCard.vue"
-import ModalNewTask from "@/components/ModalNewTasks.vue";
-import { getAllTasks, Task } from '@/models/Tasks';
+// import ModalNewTask from "@/components/ModalNewTasks.vue";
+import { Task } from '@/models/Tasks';
 import { add, list, grid } from "ionicons/icons";
+import { onChildAdded, onChildChanged, onChildRemoved } from "firebase/database";
+
+import { getDatabase, ref as dbRef, onValue } from "firebase/database";
+
+const tasks = ref<Task[]>([]);
+console.log(tasks)
+const db = getDatabase();
+const tasksRef = dbRef(db, 'tasks/');
+
+onValue(tasksRef, (snapshot) => {
+	const data = snapshot.val();
+
+	tasks.value = data
+      ? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
+      : [];
+}, {
+  onlyOnce: true
+});
+
+onChildChanged(tasksRef, (data) => {
+	const changedTask = data.val() as Task;
+    const id = data.key;
+
+	const index = tasks.value.findIndex((task) => task._id === id);
+	if (index !== -1) {
+      tasks.value[index] = { ...changedTask };
+    }
+});
+
+// onMounted(() => {
+// //   const tasksRef = dbRef(db, "tasks");
+//   onValue(tasksRef, (snapshot) => {
+//     const data = snapshot.val();
+//     if (data) {
+//       // Convierte objeto en array con id
+//       tasks.value = data
+//     } else {
+//       tasks.value = [];
+//     }
+//   });
+// });
 
 const isModalOpen = ref(false);
 const openModal = () => {
 	isModalOpen.value = true;
 };
 
-const tasks = ref<Task[]>([]);
 const handleTaskCreated = (newTask: Task) => {
-	tasks.value.unshift(newTask);
+	// tasks.value.unshift(newTask);
 };
 
-(async () => {
-	try {
-		const datos = await getAllTasks();
-		// console.log(datos);
-		tasks.value = datos;
-	} catch (error) {
-		console.error("Error al cargar tareas:", error);
-	} finally {
-		// loading.value = false;
-	}
-})();
-
-const isGridView = ref(true);
+const isGridView = ref(false);
 
 const toggleGridListView = () =>  {
 	isGridView.value = !isGridView.value;

@@ -27,18 +27,23 @@ import { createOutline } from 'ionicons/icons';
 import { defineProps, defineEmits } from 'vue';
 import { Task } from '@/models/Tasks';
 
-type Props = {
-	task: Task
-}
+// type Props = {
+// 	task: Task
+// }
 
-const props = defineProps<Props>();
-const task = props.task;
+// const props = defineProps<Props>();
+// const task = props.task;
+const props = defineProps<{ task: Task }>();
 
+// Evento para enviar al padre la task actualizada
+const emit = defineEmits<{
+  (e: "editTask", updatedTask: Task): void;
+}>();
 
-const emit = defineEmits(['editTask']);
-const onEdit = (task: Task) => {
-	emit('editTask', task);
-};
+// const emit = defineEmits(['editTask']);
+// const onEdit = (task: Task) => {
+// 	emit('editTask', task);
+// };
 
 </script>
 
