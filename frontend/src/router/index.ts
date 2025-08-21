@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import HomePage from '../views/HomePage.vue'
+import TimeLinePage from '../views/TimeLinePage.vue'
 import TabBar from '../components/TabBar.vue';
 
 const routes: Array<RouteRecordRaw> = [
@@ -12,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/homePage',
 		name: 'HomePage',
 		component: HomePage
+	},
+	{
+		path: '/timeLinePage',
+		name: 'TimeLinePage',
+		component: TimeLinePage
 	},
 	{
 		path: '/',

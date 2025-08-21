@@ -1,0 +1,62 @@
+:root{
+    --px-day: 40px; /* ANCHO de un día (ajustable) */
+    --lane-h: 48px; /* Alto de cada carril */
+    --header-h: 56px;
+    --grid-gap: 1px; /* líneas verticales finas */
+    --bg: #0f172a; /* slate-900 */
+    --panel: #111827; /* gray-900 */
+    --card: #1f2937; /* gray-800 */
+    --muted: #94a3b8; /* slate-400 */
+    --accent: #22c55e; /* verde */
+    --accent-2: #3b82f6; /* azul */
+    --accent-3: #eab308; /* amarillo */
+    }
+    *{ box-sizing: border-box; }
+    html, body, #app{ height:100%; margin:0; background:var(--bg); color:white; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', 'Noto Sans', sans-serif; }
+    
+    
+    .app-shell{ height:100%; display:flex; flex-direction:column; }
+    .topbar{ height:56px; display:flex; align-items:center; gap:12px; padding:0 16px; background:var(--panel); border-bottom:1px solid #1f2937; position:sticky; top:0; z-index:10; }
+    .topbar h1{ font-size:16px; font-weight:600; margin:0; }
+    .topbar .spacer{ flex:1; }
+    .topbar button{ background:#2563eb; color:white; border:none; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600; }
+    .topbar button:active{ transform: translateY(1px); }
+    
+    
+    .timeline-wrap{ position:relative; flex:1; min-height:0; display:flex; }
+    .sidebar{ width:220px; background:var(--panel); border-right:1px solid #1f2937; overflow:auto; }
+    .sidebar h3{ font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin:12px 12px 8px; }
+    .sidebar .lane-item{ display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid #1f2937; }
+    .sidebar .lane-dot{ width:10px; height:10px; border-radius:999px; background:#64748b; }
+    
+    
+    .scroller{ position:relative; flex:1; overflow:auto; background:linear-gradient(180deg, #0b1220, #0b1220), #0b1220; }
+    .header{ position:sticky; top:0; left:0; z-index:5; display:flex; background:var(--card); border-bottom:1px solid #1f2937; }
+    .header .day{ width:var(--px-day); min-width:var(--px-day); height:var(--header-h); display:flex; flex-direction:column; align-items:center; justify-content:center; border-right: var(--grid-gap) solid #0b1220; font-size:12px; color:var(--muted); }
+    .header .day.today{ color:white; font-weight:700; }
+    
+    
+    .grid{ position:relative; }
+    .grid-row{ position:relative; height:var(--lane-h); border-bottom:1px solid #0f172a; background:linear-gradient(90deg, transparent calc(var(--px-day) - var(--grid-gap)), #0f172a calc(var(--px-day) - var(--grid-gap)), #0f172a calc(var(--px-day) - var(--grid-gap) + var(--grid-gap)), transparent calc(var(--px-day) - var(--grid-gap) + var(--grid-gap))) repeat-x; background-size: var(--px-day) var(--lane-h); }
+    
+    
+    .tasks-layer{ position:absolute; left:0; top:0; right:0; pointer-events:none; }
+    .task{ position:absolute; top:0; height:36px; margin-top:6px; border-radius:10px; box-shadow:0 8px 18px rgba(0,0,0,.3); display:flex; align-items:center; gap:8px; padding:0 12px; cursor:grab; pointer-events:auto; user-select:none; }
+    .task:active{ cursor:grabbing; }
+    .task .title{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+    .task .dates{ font-size:11px; opacity:.8; }
+    .task[data-color="1"]{ background: var(--accent); color:#052e16; }
+    .task[data-color="2"]{ background: var(--accent-2); }
+    .task[data-color="3"]{ background: var(--accent-3); color:#111827; }
+    .task.dragging{ outline:2px dashed white; opacity:.85; }
+    
+    
+    .today-line{ position:absolute; top:0; bottom:0; width:2px; background:#ef4444; mix-blend-mode:screen; pointer-events:none; }
+    
+    
+    .legend{ position:absolute; right:12px; bottom:12px; background:rgba(17,24,39,.8); border:1px solid #1f2937; padding:8px 10px; border-radius:10px; font-size:12px; color:var(--muted); }
+    
+    
+    /* Scrollbar sutil */
+    .scroller::-webkit-scrollbar{ height:12px; width:12px; }
+    .scroller::-webkit-scrollbar-thumb{ background:#1f2937; border-radius:10px; }

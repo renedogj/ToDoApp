@@ -17,7 +17,7 @@
 					</ion-button>
 				</ion-toolbar>
 			</ion-header>
-			<ion-content :fullscreen="true">
+			<ion-content :fullscreen="true">					
 				<ion-grid v-if="isGridView">
 					<ion-row>
 						<div v-for="task in tasks" :key="task._id">
