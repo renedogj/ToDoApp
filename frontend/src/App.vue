@@ -1,12 +1,10 @@
 <template>
-  <ion-app>
-	<ion-router-outlet />
-  </ion-app>
+  <div id="app">
+    <router-view />
+  </div>
 </template>
 
 <script lang="ts">
-import { IonApp, IonRouterOutlet } from '@ionic/vue';
-
 import { defineComponent } from 'vue';
 
 
@@ -35,7 +33,18 @@ const analytics = getAnalytics(app);
 
 export default defineComponent({
   name: 'App',
-  components: { IonApp, IonRouterOutlet },
+  // components: { IonApp, IonRouterOutlet },
 });
 
 </script>
+
+<style>
+/* Similitud con ion-app (full height, fondo base) */
+#app {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+}
+</style>

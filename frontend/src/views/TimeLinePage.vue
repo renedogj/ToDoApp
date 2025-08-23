@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import InfiniteTimeline from '@/components//InfiniteTimeline.vue'
+import InfiniteTimeline from '@/components/InfiniteTimeline.vue'
 // import seed from './data/tasks.json'
 
 const seed = {

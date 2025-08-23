@@ -1,8 +1,9 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
+// import { createRouter, createWebHistory } from '@ionic/vue-router';
+// import { RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import TimeLinePage from '../views/TimeLinePage.vue'
-import TabBar from '../components/TabBar.vue';
+// import TabBar from '../components/TabBar.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -21,31 +22,36 @@ const routes: Array<RouteRecordRaw> = [
 	},
 	{
 		path: '/:board',
-		component: TabBar,
-		children: [
-		{
-			path: '',
-			name: 'HomePage',
-			component: HomePage
-		},
-		{
-			path: 'home',
-			component: () => import('../views/HomePage.vue'),
-		},
-		{
-			path: 'radio',
-			component: () => import('../views/TimeLinePage.vue'),
-		},
-		{
-			path: 'library',
-			component: () => import('../views/HomePage.vue'),
-		},
-		{
-			path: 'search',
-			component: () => import('../views/HomePage.vue'),
-		},
-		],
+		name: 'HomePage',
+		component: HomePage
 	},
+	// {
+	// 	path: '/:board',
+	// 	component: TabBar,
+	// 	children: [
+	// 	{
+	// 		path: '',
+	// 		name: 'HomePage',
+	// 		component: HomePage
+	// 	},
+	// 	{
+	// 		path: 'home',
+	// 		component: () => import('../views/HomePage.vue'),
+	// 	},
+	// 	{
+	// 		path: 'radio',
+	// 		component: () => import('../views/TimeLinePage.vue'),
+	// 	},
+	// 	{
+	// 		path: 'library',
+	// 		component: () => import('../views/HomePage.vue'),
+	// 	},
+	// 	{
+	// 		path: 'search',
+	// 		component: () => import('../views/HomePage.vue'),
+	// 	},
+	// 	],
+	// },
 ]
 
 const router = createRouter({

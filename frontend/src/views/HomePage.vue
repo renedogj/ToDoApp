@@ -1,105 +1,108 @@
 <template>
-	<ion-split-pane when="md" content-id="main">
-		<SideMenu />
-		<ion-page id="main">
-			<ion-header :translucent="true">
-				<ion-toolbar>
-					<ion-buttons slot="start">
-						<ion-menu-button menu="main-menu"></ion-menu-button>
-					</ion-buttons>
-					<ion-title>Tus tareas</ion-title>
-					<ion-button @click="toggleGridListView" slot="secondary" fill="clear" color="primary" class="right-10">
-						<ion-icon slot="icon-only" :icon="isGridView ? list : grid"></ion-icon>
-					</ion-button>
-					<ion-button id="open-modal" @click="openModal" slot="primary" fill="solid" shape="round"
-						color="primary" class="right-20">
-						<ion-icon slot="icon-only" :icon="add"></ion-icon>
-					</ion-button>
-				</ion-toolbar>
-			</ion-header>
-			<ion-content :fullscreen="true">					
-				<ion-grid v-if="isGridView">
-					<ion-row>
-						<div v-for="task in tasks" :key="task._id">
-							<TaskCard :task="task" @editTask="editTask" />
-						</div>
-					</ion-row>
-				</ion-grid>
+	<div class="app">
+		<!-- Side Menu -->
+		<SideMenu :isOpen="isMenuOpen" @closeMenu="isMenuOpen = false" />
 
-				<ion-list v-else>
-					<div v-for="task in tasks" :key="task._id">
+		<!-- Main Content -->
+		<div class="main" :class="{ 'main-shift': isMenuOpen}" id="main">
+
+			<!-- Header -->
+			<header class="header">
+				<div class="header-left">
+					<!-- Botón menú lateral -->
+					<button v-if="!isMenuOpen" class="icon-button" @click="toggleMenu">
+						☰
+					</button>
+					<h1 class="title">Tus tareas</h1>
+				</div>
+
+				<div class="header-right">
+					<!-- Botón Grid/List -->
+					<button class="icon-button" @click="toggleGridListView">
+						<span v-if="isGridView">≡</span>
+						<span v-else>▦</span>
+					</button>
+
+					<!-- Botón añadir -->
+					<button class="add-button" @click="openModal">
+						＋
+					</button>
+				</div>
+			</header>
+
+			<!-- Content -->
+			<main class="content">
+				<!-- Vista en grid -->
+				<div v-if="isGridView" class="grid">
+					<div v-for="task in tasks" :key="task._id" class="grid-item">
 						<TaskCard :task="task" @editTask="editTask" />
 					</div>
-				</ion-list>
-			</ion-content>
-			<ion-footer>
-				<ion-toolbar>
-					<ion-title>Footer</ion-title>
-				</ion-toolbar>
-			</ion-footer>
-		</ion-page>
-		<!-- <ModalNewTask :isOpen="isModalOpen" @update:isOpen="isModalOpen = $event" @taskCreated="handleTaskCreated" /> -->
-	</ion-split-pane>
+				</div>
+
+				<!-- Vista en lista -->
+				<div v-else class="list">
+					<div v-for="task in tasks" :key="task._id" class="list-item">
+						<TaskCard :task="task" @editTask="editTask" />
+					</div>
+				</div>
+			</main>
+		</div>
+	</div>
 </template>
 
+<!-- <ModalNewTask :isOpen="isModalOpen" @update:isOpen="isModalOpen = $event" @taskCreated="handleTaskCreated" /> -->
 <script lang="ts" setup>
-import {
-	IonContent,
-	IonHeader,
-	IonPage,
-	IonTitle,
-	IonToolbar,
-	IonFooter,
-	IonButtons,
-	IonButton,
-	IonMenu,
-	IonMenuButton,
-	IonSplitPane,
-	// IonItem,
-	// IonLabel,
-	IonGrid,
-	IonRow,
-	// IonCol,
-	// IonModal,
-	// IonInput,
-	// IonTextarea,
-	// IonFab, IonFabButton, IonFabList,
-	IonIcon,
-	IonList, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle
-} from '@ionic/vue';
-import { ref, triggerRef , markRaw, reactive, onMounted  } from "vue";
+import { ref, triggerRef, markRaw, reactive, onMounted, onUnmounted } from "vue";
 import SideMenu from "@/components/SideMenu.vue";
 import TaskCard from "@/components/TaskCard.vue"
 // import ModalNewTask from "@/components/ModalNewTasks.vue";
 import { Task } from '@/models/Tasks';
-import { add, list, grid } from "ionicons/icons";
-import { onChildAdded, onChildChanged, onChildRemoved } from "firebase/database";
 
+import { onChildAdded, onChildChanged, onChildRemoved } from "firebase/database";
 import { getDatabase, ref as dbRef, onValue } from "firebase/database";
 
+// Estado del menú lateral
+const isMenuOpen = ref(false);
+
+function toggleMenu() {
+	isMenuOpen.value = !isMenuOpen.value;
+}
+
 const tasks = ref<Task[]>([]);
-console.log(tasks)
+// console.log(tasks)
 const db = getDatabase();
+const boardName = ref("Notas")
+const boardRef = dbRef(db, "boards/" + boardName.value)
 const tasksRef = dbRef(db, 'tasks/');
+
+onValue(boardRef, (snapshot) => {
+	const data = snapshot.val();
+	console.log(data)
+	// tasks.value = data
+	//   ? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
+	//   : [];
+}, {
+	onlyOnce: true
+});
 
 onValue(tasksRef, (snapshot) => {
 	const data = snapshot.val();
 
 	tasks.value = data
-      ? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
-      : [];
+		? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
+		: [];
 }, {
-  onlyOnce: true
+	onlyOnce: true
 });
 
 onChildChanged(tasksRef, (data) => {
 	const changedTask = data.val() as Task;
-    const id = data.key;
+	const id = data.key;
 
 	const index = tasks.value.findIndex((task) => task._id === id);
 	if (index !== -1) {
-      tasks.value[index] = { ...changedTask };
-    }
+		tasks.value[index] = { ...changedTask };
+	}
 });
 
 // onMounted(() => {
@@ -126,7 +129,7 @@ const handleTaskCreated = (newTask: Task) => {
 
 const isGridView = ref(false);
 
-const toggleGridListView = () =>  {
+const toggleGridListView = () => {
 	isGridView.value = !isGridView.value;
 }
 
@@ -134,14 +137,132 @@ const editTask = (task: Task) => {
 	console.log('Editar tarea:', task);
 };
 
+
+// function handleResize() {
+//   isDesktop.value = window.innerWidth >= 768; // md breakpoint
+//   if (isDesktop.value) {
+//     isMenuOpen.value = true; // en desktop siempre abierto
+//   }
+// }
+
+onMounted(() => {
+	// handleResize();
+	// window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+	// window.removeEventListener("resize", handleResize);
+});
 </script>
 
 <style scoped>
-.right-10 {
+/* .right-10 {
 	margin-right: 10px;
 }
 
 .right-20 {
 	margin-right: 20px;
+} */
+
+/* Layout general */
+.app {
+	display: flex;
+	height: 100vh;
+}
+
+/* Main content */
+.main {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+/* Header */
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	/* background: white; */
+	border-bottom: 1px solid #ddd;
+	padding: 8px 15px;
+}
+
+.header-left {
+	display: flex;
+	align-items: center;
+}
+
+.title {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-left: 10px;
+}
+
+.header-right {
+	display: flex;
+	gap: 10px;
+}
+
+/* Botones */
+.icon-button {
+	background: none;
+	border: 1px solid #ccc;
+	border-radius: 50%;
+	padding: 6px 10px;
+	cursor: pointer;
+	font-size: 1.1rem;
+}
+
+.icon-button:hover {
+	background: #f0f0f0;
+}
+
+.add-button {
+	background: #007bff;
+	border: none;
+	color: white;
+	border-radius: 50%;
+	font-size: 1.2rem;
+	padding: 8px 12px;
+	cursor: pointer;
+}
+
+.add-button:hover {
+	background: #0056b3;
+}
+
+/* Contenido */
+.content {
+	flex: 1;
+	overflow-y: auto;
+	padding: 15px;
+}
+
+/* Grid */
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 15px;
+}
+
+.grid-item {
+	/* background: #fff; */
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 8px;
+}
+
+/* Lista */
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.list-item {
+	/* background: #fff; */
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 8px;
 }
 </style>
