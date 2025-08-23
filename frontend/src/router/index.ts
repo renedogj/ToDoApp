@@ -7,10 +7,10 @@ import TabBar from '../components/TabBar.vue';
 const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/',
-		redirect: '/homePage'
+		redirect: '/Notas'
 	},
 	{
-		path: '/homePage',
+		path: '/HomePage',
 		name: 'HomePage',
 		component: HomePage
 	},
@@ -20,12 +20,13 @@ const routes: Array<RouteRecordRaw> = [
 		component: TimeLinePage
 	},
 	{
-		path: '/',
+		path: '/:board',
 		component: TabBar,
 		children: [
 		{
 			path: '',
-			redirect: '/home',
+			name: 'HomePage',
+			component: HomePage
 		},
 		{
 			path: 'home',
@@ -33,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
 		},
 		{
 			path: 'radio',
-			component: () => import('../views/RadioPage.vue'),
+			component: () => import('../views/TimeLinePage.vue'),
 		},
 		{
 			path: 'library',
