@@ -19,8 +19,8 @@
     /* .topbar{ height:56px; display:flex; align-items:center; gap:12px; padding:0 16px; background:var(--panel); border-bottom:1px solid #1f2937; position:sticky; top:0; z-index:10; } */
     /* .topbar h1{ font-size:16px; font-weight:600; margin:0; } */
     /* .topbar .spacer{ flex:1; } */
-    /* .topbar button{ background:#2563eb; color:white; border:none; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600; } */
-    /* .topbar button:active{ transform: translateY(1px); } */
+    .topbar button{ background:#2563eb; color:white; border:none; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600; }
+    .topbar button:active{ transform: translateY(1px); }
     
     
     .timeline-wrap{ position:relative; flex:1; min-height:0; display:flex; }

@@ -61,7 +61,6 @@ const changeBoard = (board:any ) => {
 }
 
 const changeView = (view:number) => {
-	console.log(view)
 	emit("updateView", view)
 }
 </script>

@@ -45,7 +45,7 @@
 					<TaskCard v-for="task in tasks" :task="task" @editTask="editTask" />
 				</List>
 
-				<TimeLineStructure v-if="actualView == 3" ref="timelineStructureRef" />
+				<TimeLineStructure v-if="actualView == 3" :tasks="tasks" ref="timelineStructureRef" />
 			</main>
 		</div>
 

@@ -10,26 +10,30 @@
 
         <!-- Capa con filas de grid -->
         <div class="grid"
-            :style="{ width: contentWidth + 'px', height: lanes.length * laneH + 'px', marginTop: '0px' }">
-            <div v-for="lane in lanes" :key="lane.id" class="grid-row"></div>
+            :style="{ width: contentWidth + 'px', height: tasks.length * taskH + 'px', marginTop: '0px' }">
+            <!-- <div v-for="task in tasks" :key="task.id" class="grid-row"></div> -->
 
             <!-- Línea de hoy -->
             <div class="today-line" :style="todayLineStyle"></div>
 
             <!-- Capa de tareas -->
-            <div class="tasks-layer" :style="{ height: lanes.length * laneH + 'px' }">
-                <div v-for="task in tasks" :key="task.id" class="task" :data-color="(task.color || 1)"
-                    :class="{ dragging: dragging && dragging.id === task.id }" :style="taskStyle(task)"
-                    @pointerdown.prevent="startDrag(task, $event)">
-                    <div class="title">{{ task.title }}</div>
-                    <div class="dates">{{ shortDate(task.start) }} → {{ shortDate(task.end) }}</div>
+            <div class="subTasks-layer" :style="{ height: tasks.length * taskH + 'px' }">
+                <div v-for="(task, index) in tasks" :key="task.id">
+                    <!-- {{ task }} -->
+                    <div v-for="subTask in task.subTasks" :key="subTask._id" class="task" :data-color="(subTask.color || 1)"
+                        :class="{ dragging: dragging && dragging.id === subTask._id }" :style="subTaskStyle(subTask, index)"
+                        @pointerdown.prevent="startDrag(subTask, $event)">
+                        <!-- > -->
+                        <!-- {{ subTask }} -->
+                        <div class="title">{{ subTask.title }}</div>
+                        <div class="dates">{{ shortDate(subTask.startDate) }} → {{ shortDate(subTask.endDate) }}</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-
         <!-- leyenda -->
-        <div class="legend">Arrastra una tarea para cambiar su fecha. Se ajusta por días.</div>
+        <!-- <div class="legend">Arrastra una tarea para cambiar su fecha. Se ajusta por días.</div> -->
     </div>
 </template>
 <script setup>
@@ -37,15 +41,16 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 
 
 const props = defineProps({
-    lanes: { type: Array, required: true },
-    tasks: { type: Array, required: true }
+    tasks: { type: Array, required: true },
+    // subTasks: { type: Array, required: true }
 })
-const emit = defineEmits(['update:tasks'])
+console.log(props.tasks)
+const emit = defineEmits(['update:subTasks'])
 
 
 // Constantes de layout
 const pxPerDay = 40 // debe coincidir con --px-day
-const laneH = 48
+const taskH = 48
 const numDaysOnAnchor = 100
 const scrollDebounceTime = 150;
 
@@ -107,26 +112,29 @@ function shortDate(iso) {
 }
 
 // Posicionamiento de tareas
-function taskStyle(task) {
-    const laneIndex = Math.max(0, props.lanes.findIndex(l => l.id === task.lane))
-    const baseOffset = diffInDays(startAnchor.value, new Date(task.start))
-    const previewOffset = baseOffset + (task._dragOffsetDays || 0)
-    const duration = Math.max(1, diffInDays(new Date(task.start), new Date(task.end)))
+function subTaskStyle(subTask, taskIndex) {
+    // console.log(subTask)
+    // const taskIndex = Math.max(0, props.tasks.findIndex(l => l.id === subTask.task))
+    const baseOffset = diffInDays(startAnchor.value, new Date(subTask.startDate))
+    const previewOffset = baseOffset + (subTask._dragOffsetDays || 0)
+    const duration = Math.max(1, diffInDays(new Date(subTask.startDate), new Date(subTask.endDate)))
+    console.log(duration)
     const left = previewOffset * pxPerDay
     const width = duration * pxPerDay
-    const top = laneIndex * laneH
+    const top = taskIndex * taskH
+    console.log({ left: left + 'px', width: width + 'px', top: top + 'px' })
     return { left: left + 'px', width: width + 'px', top: top + 'px' }
 }
 
 // Drag & drop manual (pixel → días, con auto-extensión del calendario)
 const dragging = ref(null) // { id, startX, originStart, originEnd }
 
-function startDrag(task, event) {
+function startDrag(subTask, event) {
     dragging.value = {
-        id: task.id,
+        id: subTask._id,
         startX: event.clientX,
-        originStart: new Date(task.start),
-        originEnd: new Date(task.end)
+        originStart: new Date(subTask.startDate),
+        originEnd: new Date(subTask.endDate)
     }
     window.addEventListener('pointermove', onDrag)
     window.addEventListener('pointerup', onDrop)
@@ -138,8 +146,8 @@ function onDrag(event) {
     const deltaDays = Math.round(dx / pxPerDay)
 
 
-    const task = props.tasks.find(x => x.id === dragging.value.id)
-    if (!task) return
+    const subTask = props.tasks.map(task => task.subTasks.find(x => x.id === dragging.value.id))
+    if (!subTask) return
 
 
     // Vista previa (clase .dragging) + expansión si nos salimos
@@ -159,24 +167,24 @@ function onDrag(event) {
 
 
     // Aplicamos estilo "dragging" mediante efectos reactivos
-    task._dragOffsetDays = deltaDays
+    subTask._dragOffsetDays = deltaDays
 }
 
 function onDrop() {
     if (!dragging.value) return
     const id = dragging.value.id
-    const task = props.tasks.find(x => x.id === id)
-    if (task) {
-        const delta = Math.round((task._dragOffsetDays || 0))
-        const newStart = addDays(new Date(task.start), delta)
-        const newEnd = addDays(new Date(task.end), delta)
-        task.start = toISO(newStart)
-        task.end = toISO(newEnd)
-        delete task._dragOffsetDays
+    const subTask = props.tasks.map(task => task.subTasks.find(x => x._id === id))
+    if (subTask) {
+        const delta = Math.round((subTask._dragOffsetDays || 0))
+        const newStart = addDays(new Date(subTask.startDate), delta)
+        const newEnd = addDays(new Date(subTask.endDate), delta)
+        subTask.startDate = toISO(newStart)
+        subTask.endDate = toISO(newEnd)
+        delete subTask._dragOffsetDays
 
 
         // Emitir cambio a padre
-        emit('update:tasks', [...props.tasks])
+        emit('update:subTasks', [...props.tasks.map(task => task.subTasks)])
     }
     dragging.value = null
     window.removeEventListener('pointermove', onDrag)
@@ -192,7 +200,14 @@ function toISO(d) {
 
 
 // Forzar re-render de estilo durante drag (clase .dragging)
-watch(() => props.tasks.map(task => task._dragOffsetDays), () => { }, { deep: true })
+// watch(() => props.subTasks.map(subTask => subTask._dragOffsetDays), () => { }, { deep: true })
+// watch(
+//     () => props.tasks.map(task => task.subTasks.map(subTask => subTask._dragOffsetDays)),
+//     () => {
+//         // Aquí puedes actualizar posiciones o sincronizar UI cuando cambien los offsets
+//     },
+//     { deep: true }
+// )
 
 // Calcular día central basado en la posición del scroll
 function calculateCenterDate() {
@@ -252,7 +267,7 @@ function handleScroll() {
         centerOnDay(currentCenter, true);
 
         adjustCalendarRange()
-    }, scrollDebounceTime);    
+    }, scrollDebounceTime);
 }
 
 function adjustCalendarRange() {
