@@ -2,7 +2,7 @@
 	<aside class="sidemenu" :class="{ open: isOpen}">
 		<!-- Header -->
 		<header class="sidemenu-header">
-			<button v-if="!isDesktop" class="icon-button" @click="closeMenu">
+			<button class="icon-button" @click="closeMenu">
 				☰
 			</button>
 			<h2>Menu Content</h2>
@@ -11,8 +11,20 @@
 		<!-- Content -->
 		<nav class="sidemenu-content">
 			<ul>
-				<li v-for="(item, index) in menuItems" :key="index">
-					<button class="menu-item">{{ item }}</button>
+				<li v-for="(item, index) in boardList" :key="index">
+					<button class="menu-item" @click="changeBoard(index)">
+					{{ index }}
+					</button>
+				</li>
+			</ul>
+		</nav>
+
+		<nav class="sidemenu-content">
+			<ul>
+				<li v-for="(item, index) in boardViews" :key="index">
+					<button class="menu-item"  @click="changeView(index)">
+					{{ item }}
+					</button>
 				</li>
 			</ul>
 		</nav>
@@ -21,24 +33,37 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits } from "vue";
+import { useRouter } from 'vue-router'
 
-const emit = defineEmits<{ (e: 'closeMenu'): void }>();
-
-function closeMenu() {
-  emit("closeMenu");
-}
+const router = useRouter()
 
 const props = defineProps<{
 	isOpen?: boolean;
+	boardList?: string[]
+	actualBoard: string,
+	boardViews: number,
+	actualView: number,
 }>();
 
-const menuItems = [
-	"Pokémon Yellow",
-	"Mega Man X",
-	"The Legend of Zelda",
-	"Pac-Man",
-	"Super Mario World",
-];
+const emit = defineEmits<{
+  (e: 'update:closeMenu'): void
+  (e: 'updateBoard', boardName: string): void
+  (e: 'updateView', actualView: number): void
+}>()
+
+const closeMenu =() => {
+  emit("update:closeMenu");
+}
+
+const changeBoard = (board:any ) => {
+	router.push({ params: { board } })
+	emit("updateBoard", board)
+}
+
+const changeView = (view:number) => {
+	console.log(view)
+	emit("updateView", view)
+}
 </script>
 
 <style scoped>
@@ -123,15 +148,16 @@ const menuItems = [
 
 .menu-item:hover {
 	background: #f0f0f0;
+	color: black
 }
 
 /* Footer */
-.sidemenu-footer {
+/* .sidemenu-footer {
 	padding: 12px;
 	border-top: 1px solid #ddd;
 	text-align: center;
 	font-size: 0.9rem;
 	color: #666;
 	background: #fafafa;
-}
+} */
 </style>

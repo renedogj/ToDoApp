@@ -1,10 +1,12 @@
 <template>
 	<div class="app">
 		<!-- Side Menu -->
-		<SideMenu :isOpen="isMenuOpen" @closeMenu="isMenuOpen = false" />
+		<SideMenu :isOpen="isMenuOpen" @closeMenu="isMenuOpen = false" :boardList="boardList" :actualBoard="boardName"
+			:boardViews="boardViews" :actualView="actualView" @updateBoard="boardName = $event"
+			@updateView="actualView = $event" />
 
 		<!-- Main Content -->
-		<div class="main" :class="{ 'main-shift': isMenuOpen}" id="main">
+		<div class="main" :class="{ 'main-shift': isMenuOpen }" id="main">
 
 			<!-- Header -->
 			<header class="header">
@@ -13,15 +15,18 @@
 					<button v-if="!isMenuOpen" class="icon-button" @click="toggleMenu">
 						☰
 					</button>
-					<h1 class="title">Tus tareas</h1>
+					<h1 class="title">{{ boardName }} {{ actualView }}</h1>
 				</div>
 
 				<div class="header-right">
+
+					<button v-if="actualView == 3" @click="goToday">Hoy</button>
+
 					<!-- Botón Grid/List -->
-					<button class="icon-button" @click="toggleGridListView">
-						<span v-if="isGridView">≡</span>
-						<span v-else>▦</span>
-					</button>
+					<!-- <button v-if="[1, 2].includes(actualView)" class="icon-button" @click="toggleGridListView">
+						<span v-if="actualView == 1">▦</span>
+						<span v-if="actualView == 2">≡</span>
+					</button> -->
 
 					<!-- Botón añadir -->
 					<button class="add-button" @click="openModal">
@@ -32,34 +37,38 @@
 
 			<!-- Content -->
 			<main class="content">
-				<!-- Vista en grid -->
-				<div v-if="isGridView" class="grid">
-					<div v-for="task in tasks" :key="task._id" class="grid-item">
-						<TaskCard :task="task" @editTask="editTask" />
-					</div>
-				</div>
+				<Grid v-if="actualView == 1">
+					<TaskCard v-for="task in tasks" :task="task" @editTask="editTask" />
+				</Grid>
 
-				<!-- Vista en lista -->
-				<div v-else class="list">
-					<div v-for="task in tasks" :key="task._id" class="list-item">
-						<TaskCard :task="task" @editTask="editTask" />
-					</div>
-				</div>
+				<List v-if="actualView == 2">
+					<TaskCard v-for="task in tasks" :task="task" @editTask="editTask" />
+				</List>
+
+				<TimeLineStructure v-if="actualView == 3" ref="timelineStructureRef" />
 			</main>
 		</div>
+
 	</div>
 </template>
 
 <!-- <ModalNewTask :isOpen="isModalOpen" @update:isOpen="isModalOpen = $event" @taskCreated="handleTaskCreated" /> -->
+
 <script lang="ts" setup>
 import { ref, triggerRef, markRaw, reactive, onMounted, onUnmounted } from "vue";
+import { useRoute } from 'vue-router'
 import SideMenu from "@/components/SideMenu.vue";
 import TaskCard from "@/components/TaskCard.vue"
+import Grid from "@/components/Grid.vue"
+import List from "@/components/List.vue"
+import TimeLineStructure from "@/components/TimeLineStructure.vue"
 // import ModalNewTask from "@/components/ModalNewTasks.vue";
 import { Task } from '@/models/Tasks';
+import viewListJson from '@/models/db/viewList.json';
 
 import { onChildAdded, onChildChanged, onChildRemoved } from "firebase/database";
 import { getDatabase, ref as dbRef, onValue } from "firebase/database";
+// import ListItem from "@/components/ListItem.vue";
 
 // Estado del menú lateral
 const isMenuOpen = ref(false);
@@ -67,30 +76,48 @@ const isMenuOpen = ref(false);
 function toggleMenu() {
 	isMenuOpen.value = !isMenuOpen.value;
 }
+const route = useRoute()
 
+const boardList = ref();
+const boardName = ref("")
+boardName.value = (route.params.board as string) || "Notas"
 const tasks = ref<Task[]>([]);
-// console.log(tasks)
+
+const boardViews = ref<any>({})
+const actualView = ref(1)
+
 const db = getDatabase();
-const boardName = ref("Notas")
+const boardListRef = dbRef(db, "boardList/")
 const boardRef = dbRef(db, "boards/" + boardName.value)
-const tasksRef = dbRef(db, 'tasks/');
+const tasksRef = dbRef(db, "boards/" + boardName.value + "/tasks/");
+
+const timelineStructureRef = ref(null)
 
 onValue(boardRef, (snapshot) => {
 	const data = snapshot.val();
 	console.log(data)
-	// tasks.value = data
-	//   ? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
-	//   : [];
+	tasks.value = data.tasks
+		? Object.entries(data.tasks).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
+		: [];
+	actualView.value = data.defaultView || 1;
+
+	const viewList: any = viewListJson as any;
+	Array.from(data.views.toString(), Number).forEach(id => {
+		if (viewList[id]) {
+			boardViews.value[id] = viewList[id]
+		}
+	})
 }, {
 	onlyOnce: true
 });
 
-onValue(tasksRef, (snapshot) => {
+onValue(boardListRef, (snapshot) => {
 	const data = snapshot.val();
-
-	tasks.value = data
-		? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
-		: [];
+	console.log(data)
+	boardList.value = data
+	// ? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
+	// : [];
+	// console.log(boardList.value)
 }, {
 	onlyOnce: true
 });
@@ -127,11 +154,9 @@ const handleTaskCreated = (newTask: Task) => {
 	// tasks.value.unshift(newTask);
 };
 
-const isGridView = ref(false);
-
-const toggleGridListView = () => {
-	isGridView.value = !isGridView.value;
-}
+// const toggleGridListView = () => {
+// 	actualView.value = (actualView.value == 1) ? 2 : 1
+// }
 
 const editTask = (task: Task) => {
 	console.log('Editar tarea:', task);
@@ -153,6 +178,10 @@ onMounted(() => {
 onUnmounted(() => {
 	// window.removeEventListener("resize", handleResize);
 });
+
+function goToday() {
+	timelineStructureRef.value?.scrollToToday()
+}
 </script>
 
 <style scoped>
@@ -172,6 +201,7 @@ onUnmounted(() => {
 
 /* Main content */
 .main {
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	flex: 1;
@@ -235,7 +265,7 @@ onUnmounted(() => {
 .content {
 	flex: 1;
 	overflow-y: auto;
-	padding: 15px;
+	/* padding: 15px; */
 }
 
 /* Grid */

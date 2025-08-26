@@ -49,7 +49,7 @@ const emit = defineEmits<{
 .card {
 	/* background: #fff; */
 	border-radius: 10px;
-	/* border: 1px solid #ddd; */
+	border: 1px solid #ddd;
 	padding: 12px 15px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 	transition: transform 0.2s;

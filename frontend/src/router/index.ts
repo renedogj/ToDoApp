@@ -2,29 +2,25 @@
 // import { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
-import TimeLinePage from '../views/TimeLinePage.vue'
+// import TimeLinePage from '../components/TimeLineStructure.vue'
 // import TabBar from '../components/TabBar.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
-		path: '/',
-		redirect: '/Notas'
-	},
-	{
-		path: '/HomePage',
+		path: '/:board?',
 		name: 'HomePage',
 		component: HomePage
 	},
-	{
-		path: '/timeLinePage',
-		name: 'TimeLinePage',
-		component: TimeLinePage
-	},
-	{
-		path: '/:board',
-		name: 'HomePage',
-		component: HomePage
-	},
+	// {
+	// 	path: '/HomePage',
+	// 	name: 'HomePage',
+	// 	component: HomePage
+	// },
+	// {
+	// 	path: '/timeLinePage',
+	// 	name: 'TimeLinePage',
+	// 	component: TimeLinePage
+	// },
 	// {
 	// 	path: '/:board',
 	// 	component: TabBar,
