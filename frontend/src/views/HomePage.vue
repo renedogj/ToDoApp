@@ -67,7 +67,7 @@ import { Task } from '@/models/Tasks';
 import viewListJson from '@/models/db/viewList.json';
 
 import { onChildAdded, onChildChanged, onChildRemoved } from "firebase/database";
-import { getDatabase, ref as dbRef, onValue } from "firebase/database";
+import { getDatabase, ref as dbRef, onValue, push, set } from "firebase/database";
 // import ListItem from "@/components/ListItem.vue";
 
 // Estado del menú lateral
@@ -113,11 +113,7 @@ onValue(boardRef, (snapshot) => {
 
 onValue(boardListRef, (snapshot) => {
 	const data = snapshot.val();
-	console.log(data)
 	boardList.value = data
-	// ? Object.entries(data).map(([id, value]) => ({ _id: id, ...(value as Omit<Task, "_id">) }))
-	// : [];
-	// console.log(boardList.value)
 }, {
 	onlyOnce: true
 });
@@ -145,22 +141,22 @@ onChildChanged(tasksRef, (data) => {
 //   });
 // });
 
-const isModalOpen = ref(false);
-const openModal = () => {
-	isModalOpen.value = true;
-};
+// const isModalOpen = ref(false);
+// const openModal = () => {
+// 	isModalOpen.value = true;
+// };
 
-const handleTaskCreated = (newTask: Task) => {
-	// tasks.value.unshift(newTask);
-};
+// const handleTaskCreated = (newTask: Task) => {
+// 	// tasks.value.unshift(newTask);
+// };
 
 // const toggleGridListView = () => {
 // 	actualView.value = (actualView.value == 1) ? 2 : 1
 // }
 
-const editTask = (task: Task) => {
-	console.log('Editar tarea:', task);
-};
+// const editTask = (task: Task) => {
+// 	console.log('Editar tarea:', task);
+// };
 
 
 // function handleResize() {
@@ -182,6 +178,53 @@ onUnmounted(() => {
 function goToday() {
 	timelineStructureRef.value?.scrollToToday()
 }
+
+
+const insertTasks = () => {
+  let currentDate = new Date();
+
+  for (let i = 1; i <= 45; i++) {
+    // Generar IDs únicos
+    const taskRef = push(dbRef(db, "boards/Oposición/tasks"));
+    const taskId = taskRef.key as string;
+
+    // Subtask fechas
+    const startDate = new Date(currentDate);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 3);
+
+    // Subtask
+    const subTaskRef = push(dbRef(db, `boards/Oposición/tasks/Tema ${i}/subTasks`));
+    const subTaskId = subTaskRef.key as string;
+
+    const taskData = {
+      _id: taskId,
+      title: `Tema ${i}`,
+      subTasks: {
+        [subTaskId]: {
+          _id: subTaskId,
+          title: `Subrayado tema ${i}`,
+          startDate: startDate.toISOString().split("T")[0],
+          endDate: endDate.toISOString().split("T")[0]
+        }
+      }
+    };
+
+    // Insertar en Firebase (sin async/await)
+    set(taskRef, taskData).then(() => {
+      console.log(`✅ Tema ${i} insertado`);
+    }).catch((error) => {
+      console.error("❌ Error al insertar:", error);
+    });
+
+    // Actualizar fecha para la siguiente subtarea
+    currentDate = new Date(endDate);
+    currentDate.setDate(currentDate.getDate());
+  }
+
+  // alert("🚀 Inserción de 45 tareas en progreso. Revisa tu Firebase.");
+};
+// insertTasks();
 </script>
 
 <style scoped>

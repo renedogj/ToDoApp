@@ -2,16 +2,15 @@
 	<div class="timeline-wrap">
 		<aside class="sidebar">
 			<h3>Carriles</h3>
-			<div class="lane-item" v-for="lane in tasks" :key="lane.id">
-				<div class="lane-dot" :style="{ background: lane.color }"></div>
+			<div class="lane-item" v-for="task in tasks" :key="task._id">
+				<div class="lane-dot" :style="{ background: task.color }"></div>
 				<div>
-					<div style="font-weight:600">{{ lane.title }}</div>
-					<!-- <div style="font-size:12px; color:var(--muted)">{{ lane.description }}</div> -->
+					<div style="font-weight:600">{{ task.title }}</div>
 				</div>
 			</div>
 		</aside>
 
-		<InfiniteTimeline ref="timelineRef" :lanes="tasks" />
+		<InfiniteTimeline ref="timelineRef" :tasks="tasks" />
 	</div>
 </template>
 
@@ -46,7 +45,7 @@ const props = defineProps({
     // lanes: { type: Array, required: true },
     tasks: { type: Array, required: true }
 })
-
+// console.log(props.tasks)
 // const lanes = seed.lanes
 const timelineRef = ref(null)
 
